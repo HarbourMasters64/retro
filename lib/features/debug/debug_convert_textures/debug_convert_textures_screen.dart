@@ -15,11 +15,11 @@ class DebugGeneratorFontsScreen extends StatefulWidget {
   const DebugGeneratorFontsScreen({super.key});
 
   @override
-  State<DebugGeneratorFontsScreen> createState() => _DebugGeneratorFontsScreenState();
+  State<DebugGeneratorFontsScreen> createState() =>
+      _DebugGeneratorFontsScreenState();
 }
 
 class _DebugGeneratorFontsScreenState extends State<DebugGeneratorFontsScreen> {
-
   TextureType selectedTextureType = TextureType.RGBA32bpp;
   Texture? textureData;
   File? textureFile;
@@ -44,8 +44,13 @@ class _DebugGeneratorFontsScreenState extends State<DebugGeneratorFontsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('PNG to N64 Viewer',
-                    style: TextStyle(color: Colors.white, fontFamily: 'GoogleSans', fontWeight: FontWeight.bold),
+                  const Text(
+                    'PNG to N64 Viewer',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'GoogleSans',
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   DecoratedBox(
@@ -58,17 +63,26 @@ class _DebugGeneratorFontsScreenState extends State<DebugGeneratorFontsScreen> {
                       icon: const Icon(Icons.arrow_drop_down_rounded),
                       borderRadius: BorderRadius.circular(5),
                       iconEnabledColor: Colors.white,
-                      style: const TextStyle(color: Colors.white, fontFamily: 'GoogleSans', fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'GoogleSans',
+                        fontWeight: FontWeight.bold,
+                      ),
                       dropdownColor: const Color(0xFF40aae8),
                       underline: Container(),
-                      items: TextureType.values.sublist(1).map<DropdownMenuItem>((e) => DropdownMenuItem(
-                        value: e,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 17),
-                          child: Text(e.name),
-                        ),
-                      ),).toList(),
-                      onChanged: (_){
+                      items: TextureType.values
+                          .sublist(1)
+                          .map<DropdownMenuItem>(
+                            (e) => DropdownMenuItem(
+                              value: e,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 17),
+                                child: Text(e.name),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (_) {
                         setState(() {
                           selectedTextureType = _ as TextureType;
                         });
@@ -81,7 +95,10 @@ class _DebugGeneratorFontsScreenState extends State<DebugGeneratorFontsScreen> {
                       constraints: const BoxConstraints(maxWidth: 250),
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
-                        child: Text(textureFile == null ? 'Select Texture File' : textureFile!.path.split(path.separator).last,
+                        child: Text(
+                          textureFile == null
+                              ? 'Select Texture File'
+                              : textureFile!.path.split(path.separator).last,
                           maxLines: 1,
                         ),
                       ),
@@ -100,62 +117,73 @@ class _DebugGeneratorFontsScreenState extends State<DebugGeneratorFontsScreen> {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     child: const Text('Convert Texture'),
-                    onPressed: (){
+                    onPressed: () {
                       if (textureFile != null) {
-                        setState(() {
+                        setState(() async {
                           textureData = Texture.empty();
                           textureData?.textureType = selectedTextureType;
-                          final image = decodePng(textureFile!.readAsBytesSync())!;
+                          final image =
+                              decodePng(await textureFile!.readAsBytes())!;
                           textureData!.fromRawImage(image);
-                          if(selectedTextureType.name.contains('Palette')){
+                          if (selectedTextureType.name.contains('Palette')) {
                             textureData!.isPalette = true;
                           }
-                          textureBytes = textureData!.toPNGBytes();
+                          textureBytes = await textureData!.toPNGBytes();
                         });
                       }
                     },
                   ),
-                  if(textureData != null && textureData!.isPalette)
+                  if (textureData != null && textureData!.isPalette)
+                    const SizedBox(height: 20),
+                  if (textureData != null && textureData!.isPalette)
+                    ElevatedButton(
+                      child: const Text('Load TLUT'),
+                      onPressed: () async {
+                        final result = await FilePicker.platform.pickFiles(
+                          type: FileType.image,
+                        );
+                        if (result != null) {
+                          setState(() async {
+                            final tlut = Texture.empty()
+                              ..textureType = TextureType.RGBA32bpp;
+                            final image = decodePng(
+                              await File(result.files.single.path!)
+                                  .readAsBytes(),
+                            )!;
+                            tlut.fromRawImage(image);
+                            textureData!.tlut = tlut;
+                            textureBytes = await textureData!.toPNGBytes();
+                          });
+                        }
+                      },
+                    ),
+                  if (textureData != null && textureData!.tlut != null)
+                    const SizedBox(height: 20),
+                  if (textureData != null && textureData!.tlut != null)
+                    ElevatedButton(
+                      child: const Text('Save As'),
+                      onPressed: () async {
+                        final result = await FilePicker.platform.saveFile(
+                          type: FileType.image,
+                          allowedExtensions: ['png'],
+                          fileName: 'converted.png',
+                        );
+                        if (result != null) {
+                          setState(() async {
+                            final out = File(result);
+                            await out.writeAsBytes(textureBytes!);
+                          });
+                        }
+                      },
+                    ),
                   const SizedBox(height: 20),
-                  if(textureData != null && textureData!.isPalette)
-                  ElevatedButton(
-                    child: const Text('Load TLUT'),
-                    onPressed: () async {
-                      final result = await FilePicker.platform.pickFiles(
-                        type: FileType.image,
-                      );
-                      if (result != null) {
-                        setState(() {
-                          final tlut = Texture.empty();
-                          tlut.textureType = TextureType.RGBA32bpp;
-                          final image = decodePng(File(result.files.single.path!).readAsBytesSync())!;
-                          tlut.fromRawImage(image);
-                          textureData!.tlut = tlut;
-                          textureBytes = textureData!.toPNGBytes();
-                        });
-                      }
-                    },
-                  ),
-                  if(textureData != null && textureData!.tlut != null)
-                  const SizedBox(height: 20),
-                  if(textureData != null && textureData!.tlut != null)
-                  ElevatedButton(
-                    child: const Text('Save As'),
-                    onPressed: () async {
-                      final result = await FilePicker.platform.saveFile(
-                        type: FileType.image, allowedExtensions: ['png'], fileName: 'converted.png',
-                      );
-                      if (result != null) {
-                        setState(() {
-                          final out = File(result);
-                          out.writeAsBytesSync(textureBytes!);
-                        });
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  const Text('OTR N64 Viewer',
-                    style: TextStyle(color: Colors.white, fontFamily: 'GoogleSans', fontWeight: FontWeight.bold),
+                  const Text(
+                    'OTR N64 Viewer',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'GoogleSans',
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
@@ -163,15 +191,16 @@ class _DebugGeneratorFontsScreenState extends State<DebugGeneratorFontsScreen> {
                       constraints: const BoxConstraints(maxWidth: 250),
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
-                        child: Text(textureFile == null ? 'Select Texture File' : textureFile!.path.split(path.separator).last,
+                        child: Text(
+                          textureFile == null
+                              ? 'Select Texture File'
+                              : textureFile!.path.split(path.separator).last,
                           maxLines: 1,
                         ),
                       ),
                     ),
                     onPressed: () async {
-                      final result = await FilePicker.platform.pickFiles(
-                        
-                      );
+                      final result = await FilePicker.platform.pickFiles();
                       if (result != null) {
                         setState(() {
                           textureFile = File(result.files.single.path!);
@@ -182,22 +211,21 @@ class _DebugGeneratorFontsScreenState extends State<DebugGeneratorFontsScreen> {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     child: const Text('Load Texture'),
-                    onPressed: (){
+                    onPressed: () async {
                       if (textureFile != null) {
-                        final bytes = textureFile!.readAsBytesSync();
+                        final bytes = await textureFile!.readAsBytes();
 
-                        setState(() {
-                          final resource = Resource.empty();
-                          resource.rawLoad = true;
-                          resource.open(bytes);
+                        setState(() async {
+                          final resource = Resource.empty()
+                            ..rawLoad = true
+                            ..open(bytes);
 
-                          if(resource.resourceType == ResourceType.texture){
+                          if (resource.resourceType == ResourceType.texture) {
                             textureData = Texture.empty();
                             textureData?.open(bytes);
-                            textureBytes = textureData!.toPNGBytes();
+                            textureBytes = await textureData!.toPNGBytes();
                           } else {
-                            final background = Background.empty();
-                            background.open(bytes);
+                            final background = Background.empty()..open(bytes);
                             textureData = Texture.empty();
                             textureBytes = background.texData;
                           }
@@ -211,15 +239,17 @@ class _DebugGeneratorFontsScreenState extends State<DebugGeneratorFontsScreen> {
             Expanded(
               child: Container(
                 height: MediaQuery.of(context).size.height - 119,
-                padding: const EdgeInsets.only( right: 20),
+                padding: const EdgeInsets.only(right: 20),
                 decoration: BoxDecoration(
                   color: Colors.transparent,
                   borderRadius: BorderRadius.circular(10),
-                  image: textureData != null ? DecorationImage(
-                    image: MemoryImage(textureBytes!),
-                    filterQuality: FilterQuality.none,
-                    fit: BoxFit.contain,
-                  ) : null,
+                  image: textureData != null
+                      ? DecorationImage(
+                          image: MemoryImage(textureBytes!),
+                          filterQuality: FilterQuality.none,
+                          fit: BoxFit.contain,
+                        )
+                      : null,
                 ),
               ),
             ),

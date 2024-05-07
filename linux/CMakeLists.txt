@@ -1,5 +1,5 @@
 # Project-level configuration.
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 project(runner LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
@@ -89,7 +89,7 @@ set_target_properties(${BINARY_NAME}
 # Generated plugin build rules, which manage building the plugins and adding
 # them to the application.
 include(flutter/generated_plugins.cmake)
-
+include(./rust.cmake)
 
 # === Installation ===
 # By default, "installing" just makes a relocatable bundle in the build

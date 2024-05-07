@@ -27,6 +27,8 @@
 		33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F22044A3C60003C045 /* Assets.xcassets */; };
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
+		9B5E0ADD29D1D6CA00D7B2EC /* native.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B5E0ADA29D1D6B700D7B2EC /* native.dylib */; };
+		9B5E0AE129D1D9F200D7B2EC /* bridge_generated.h in Resources */ = {isa = PBXBuildFile; fileRef = 9B5E0AE029D1D9EA00D7B2EC /* bridge_generated.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +38,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = 33CC111A2044C6BA0003C045;
 			remoteInfo = FLX;
+		};
+		9B5E0AD929D1D6B700D7B2EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9B5E0AD429D1D6B700D7B2EC /* native.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CA60B7FEF469EAC3B2E0A336;
+			remoteInfo = "native-cdylib";
+		};
+		9B5E0ADB29D1D6B700D7B2EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9B5E0AD429D1D6B700D7B2EC /* native.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CA6043101CA22969E816930C;
+			remoteInfo = "native-staticlib";
+		};
+		9B5E0ADE29D1D6CF00D7B2EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9B5E0AD429D1D6B700D7B2EC /* native.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CA60B7FEF469E2440CDF5F92;
+			remoteInfo = "native-cdylib";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -70,6 +93,8 @@
 		33E5194F232828860026EE4D /* AppInfo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppInfo.xcconfig; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		9B5E0AD429D1D6B700D7B2EC /* native.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = native.xcodeproj; path = ../native/native.xcodeproj; sourceTree = "<group>"; };
+		9B5E0AE029D1D9EA00D7B2EC /* bridge_generated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bridge_generated.h; sourceTree = "<group>"; };
 		E461E56AD6D6CCC24DEFD045 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		E48AEE54ACC5A2CD38411D5D /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		FE12D4B32B2E5B74CCF4B292 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
@@ -80,6 +105,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B5E0ADD29D1D6CA00D7B2EC /* native.dylib in Frameworks */,
 				0471F489798F956AD8890FD6 /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -101,6 +127,7 @@
 		33CC10E42044A3C60003C045 = {
 			isa = PBXGroup;
 			children = (
+				9B5E0AD429D1D6B700D7B2EC /* native.xcodeproj */,
 				33FAB671232836740065AC1E /* Runner */,
 				33CEB47122A05771004F2AC0 /* Flutter */,
 				33CC10EE2044A3C60003C045 /* Products */,
@@ -142,6 +169,7 @@
 		33FAB671232836740065AC1E /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				9B5E0AE029D1D9EA00D7B2EC /* bridge_generated.h */,
 				33CC10F02044A3C60003C045 /* AppDelegate.swift */,
 				33CC11122044BFA00003C045 /* MainFlutterWindow.swift */,
 				33E51913231747F40026EE4D /* DebugProfile.entitlements */,
@@ -159,8 +187,16 @@
 				E461E56AD6D6CCC24DEFD045 /* Pods-Runner.release.xcconfig */,
 				FE12D4B32B2E5B74CCF4B292 /* Pods-Runner.profile.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		9B5E0AD529D1D6B700D7B2EC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9B5E0ADA29D1D6B700D7B2EC /* native.dylib */,
+				9B5E0ADC29D1D6B700D7B2EC /* libnative_static.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		D73912EC22F37F3D000D13A0 /* Frameworks */ = {
@@ -189,6 +225,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				9B5E0ADF29D1D6CF00D7B2EC /* PBXTargetDependency */,
 				33CC11202044C79F0003C045 /* PBXTargetDependency */,
 			);
 			name = Runner;
@@ -233,6 +270,12 @@
 			mainGroup = 33CC10E42044A3C60003C045;
 			productRefGroup = 33CC10EE2044A3C60003C045 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 9B5E0AD529D1D6B700D7B2EC /* Products */;
+					ProjectRef = 9B5E0AD429D1D6B700D7B2EC /* native.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				33CC10EC2044A3C60003C045 /* Runner */,
@@ -241,11 +284,29 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXReferenceProxy section */
+		9B5E0ADA29D1D6B700D7B2EC /* native.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = native.dylib;
+			remoteRef = 9B5E0AD929D1D6B700D7B2EC /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9B5E0ADC29D1D6B700D7B2EC /* libnative_static.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libnative_static.a;
+			remoteRef = 9B5E0ADB29D1D6B700D7B2EC /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
 /* Begin PBXResourcesBuildPhase section */
 		33CC10EB2044A3C60003C045 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B5E0AE129D1D9F200D7B2EC /* bridge_generated.h in Resources */,
 				33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */,
 				33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */,
 			);
@@ -352,6 +413,11 @@
 			target = 33CC111A2044C6BA0003C045 /* Flutter Assemble */;
 			targetProxy = 33CC111F2044C79F0003C045 /* PBXContainerItemProxy */;
 		};
+		9B5E0ADF29D1D6CF00D7B2EC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "native-cdylib";
+			targetProxy = 9B5E0ADE29D1D6CF00D7B2EC /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -428,6 +494,7 @@
 					"@executable_path/../Frameworks",
 				);
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = Runner/bridge_generated.h;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Profile;
@@ -554,6 +621,7 @@
 					"@executable_path/../Frameworks",
 				);
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = Runner/bridge_generated.h;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -574,6 +642,7 @@
 					"@executable_path/../Frameworks",
 				);
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = Runner/bridge_generated.h;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

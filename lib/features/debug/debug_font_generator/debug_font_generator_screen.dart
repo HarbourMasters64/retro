@@ -58,7 +58,7 @@ class _DebugGeneratorFontScreenState extends State<DebugGeneratorFontScreen> {
                     style: TextStyle(
                         color: Colors.white,
                         fontFamily: 'GoogleSans',
-                        fontWeight: FontWeight.bold),
+                        fontWeight: FontWeight.bold,),
                   ),
                   TextNumpad(
                     title: 'Text Offset:',
@@ -132,7 +132,7 @@ class _DebugGeneratorFontScreenState extends State<DebugGeneratorFontScreen> {
                             offset: textOffset,
                             scale: textScale,
                             glyphWidth: glyphWidth,
-                            glyphHeight: glyphHeight),
+                            glyphHeight: glyphHeight,),
                       )
                     : null,
               ),
@@ -242,7 +242,7 @@ class FontPainter extends CustomPainter {
       final ty = (id / 8).floorToDouble();
       final to = Offset(tx * glyphWidth, ty * glyphHeight);
       final rect = Rect.fromLTWH(
-          to.dx, to.dy, glyphWidth.toDouble(), glyphHeight.toDouble());
+          to.dx, to.dy, glyphWidth.toDouble(), glyphHeight.toDouble(),);
       final text = fontTable[ty.toInt()][tx.toInt()];
       if (drawGrid) {
         canvas.drawRect(rect, paint);
@@ -258,9 +258,9 @@ class FontPainter extends CustomPainter {
                   ? convertFontSize(20)
                   : convertFontSize(text.contains(regExp)
                           ? glyphHeight - 5
-                          : glyphHeight.toDouble()) *
+                          : glyphHeight.toDouble(),) *
                       scale,
-              fontFamily: fontFamily),
+              fontFamily: fontFamily,),
         ),
       );
       textPainter.layout(maxWidth: size.width);
@@ -271,7 +271,7 @@ class FontPainter extends CustomPainter {
               (ty * glyphHeight +
                       (glyphHeight / 2) -
                       (textPainter.size.height / 2)) -
-                  offset));
+                  offset,),);
     }
   }
 

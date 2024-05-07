@@ -35,7 +35,7 @@ class _CreateFinishBottomBarModalState
           viewModel.entries[key].runtimeType == CustomTexturesEntry &&
               viewModel.prependAlt;
       widgets.add(Text("${shouldPrependAlt ? "alt/" : ""}$key",
-          style: textTheme.titleSmall));
+          style: textTheme.titleSmall,),);
       widgets.addAll(
         viewModel.entries[key]!.iterables.map(
           (file) => Row(

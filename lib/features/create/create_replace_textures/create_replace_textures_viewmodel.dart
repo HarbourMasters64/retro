@@ -72,7 +72,10 @@ class CreateReplaceTexturesViewModel extends ChangeNotifier {
 
   Future<void> onSelectOTR() async {
     final result = await FilePicker.platform.pickFiles(
-        allowMultiple: true, type: FileType.custom, allowedExtensions: ['otr']);
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: ['otr'],
+    );
     if (result != null && result.files.isNotEmpty) {
       // save paths filtering out nulls
       selectedOTRPaths = result.paths.whereType<String>().toList();
@@ -130,7 +133,7 @@ class CreateReplaceTexturesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  dumpFont(String outputPath, Function onProcessed) async {
+  Future<void> dumpFont(String outputPath, Function onProcessed) async {
     final fontImage = Image(width: 16 * 4, height: 256, numChannels: 4);
 
     final tex = Texture.empty();
@@ -144,8 +147,12 @@ class CreateReplaceTexturesViewModel extends ChangeNotifier {
           await rootBundle.load(fontTLUT.replaceAll('%d', id.toString()));
       final pngImage = decodePng(data.buffer.asUint8List())!;
       tlut.fromRawImage(pngImage);
-      compositeImage(fontImage, decodePng(tex.toPNGBytes())!,
-          dstX: id * 16, dstY: 0);
+      compositeImage(
+        fontImage,
+        decodePng(await tex.toPNGBytes())!,
+        dstX: id * 16,
+        dstY: 0,
+      );
     }
 
     final textureFile = File(path.join(outputPath, '$fontTextureName.png'));
@@ -153,13 +160,20 @@ class CreateReplaceTexturesViewModel extends ChangeNotifier {
     await textureFile.create(recursive: true);
     await textureFile.writeAsBytes(pngBytes);
     final hash = sha256.convert(pngBytes).toString();
-    onProcessed(TextureManifestEntry(
-        hash, tex.textureType, fontImage.width, fontImage.height));
+    onProcessed(
+      TextureManifestEntry(
+        hash,
+        tex.textureType,
+        fontImage.width,
+        fontImage.height,
+      ),
+    );
   }
 }
 
 Future<HashMap<String, ProcessedFilesInFolder>?> processFolder(
-    String folderPath) async {
+  String folderPath,
+) async {
   final processedFiles = HashMap<String, ProcessedFilesInFolder>();
 
   // search for and load manifest.json
@@ -194,10 +208,12 @@ Future<HashMap<String, ProcessedFilesInFolder>?> processFolder(
         // if it has, add it to the processed files list
         log('Found file with changed hash: $texPathRelativeToFolder');
 
-        final pathWithoutFilename = p.normalize(texPathRelativeToFolder
-            .split('/')
-            .sublist(0, texPathRelativeToFolder.split('/').length - 1)
-            .join('/'));
+        final pathWithoutFilename = p.normalize(
+          texPathRelativeToFolder
+              .split('/')
+              .sublist(0, texPathRelativeToFolder.split('/').length - 1)
+              .join('/'),
+        );
         if (processedFiles.containsKey(pathWithoutFilename)) {
           processedFiles[pathWithoutFilename]!
               .add(Tuple2(texFile, manifestEntry));
@@ -216,7 +232,8 @@ Future<HashMap<String, ProcessedFilesInFolder>?> processFolder(
 }
 
 Future<HashMap<String, TextureManifestEntry>?> processOTR(
-    Tuple2<List<String>, String> params) async {
+  Tuple2<List<String>, String> params,
+) async {
   try {
     var fileFound = false;
     final processedFiles = HashMap<String, TextureManifestEntry>();
@@ -290,8 +307,12 @@ Future<HashMap<String, TextureManifestEntry>?> processOTR(
   }
 }
 
-Future<bool> processFile(String fileName, MPQArchive mpqArchive,
-    String outputPath, Function onProcessed) async {
+Future<bool> processFile(
+  String fileName,
+  MPQArchive mpqArchive,
+  String outputPath,
+  Function onProcessed,
+) async {
   try {
     final file = mpqArchive.openFileEx(fileName, 0);
     final fileSize = file.size();
@@ -313,14 +334,20 @@ Future<bool> processFile(String fileName, MPQArchive mpqArchive,
         final texture = Texture.empty();
         texture.open(fileData);
 
-        final pngBytes = texture.toPNGBytes();
+        final pngBytes = await texture.toPNGBytes();
         final textureFile = File('$outputPath.png');
         await textureFile.create(recursive: true);
         await textureFile.writeAsBytes(pngBytes);
         final textureBytes = await textureFile.readAsBytes();
         hash = sha256.convert(textureBytes).toString();
-        onProcessed(TextureManifestEntry(
-            hash, texture.textureType, texture.width, texture.height));
+        onProcessed(
+          TextureManifestEntry(
+            hash,
+            texture.textureType,
+            texture.width,
+            texture.height,
+          ),
+        );
         break;
       case ResourceType.sohBackground:
         final background = Background.empty();
@@ -332,8 +359,14 @@ Future<bool> processFile(String fileName, MPQArchive mpqArchive,
         await textureFile.create(recursive: true);
         await textureFile.writeAsBytes(background.texData);
         hash = sha256.convert(background.texData).toString();
-        onProcessed(TextureManifestEntry(
-            hash, TextureType.JPEG32bpp, image.width, image.height));
+        onProcessed(
+          TextureManifestEntry(
+            hash,
+            TextureType.JPEG32bpp,
+            image.width,
+            image.height,
+          ),
+        );
         break;
       default:
         return false;

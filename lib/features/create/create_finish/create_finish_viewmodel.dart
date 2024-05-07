@@ -112,7 +112,7 @@ class CreateFinishViewModel with ChangeNotifier {
     }
 
     totalFiles += replacementMap.values.fold<int>(
-        0, (previousValue, element) => previousValue + element.length);
+        0, (previousValue, element) => previousValue + element.length,);
     currentState = AppState.changesStaged;
     notifyListeners();
   }
@@ -173,7 +173,7 @@ class CreateFinishViewModel with ChangeNotifier {
   }
 
   Future createGenerationIsolate(HashMap<String, StageEntry> entries,
-      String outputFile, bool shouldPrependAlt) async {
+      String outputFile, bool shouldPrependAlt,) async {
     final receivePort = ReceivePort();
     await Isolate.spawn(
       generateOTR,
@@ -210,10 +210,10 @@ class CreateFinishViewModel with ChangeNotifier {
 }
 
 Future<void> generateOTR(
-    Tuple4<HashMap<String, StageEntry>, String, SendPort, bool> params) async {
+    Tuple4<HashMap<String, StageEntry>, String, SendPort, bool> params,) async {
   try {
     MPQArchive? mpqArchive = MPQArchive.create(
-        params.item2, MPQ_CREATE_SIGNATURE | MPQ_CREATE_ARCHIVE_V2, 12288);
+        params.item2, MPQ_CREATE_SIGNATURE | MPQ_CREATE_ARCHIVE_V2, 12288,);
     for (final entry in params.item1.entries) {
       if (entry.value is CustomStageEntry) {
         for (final file in (entry.value as CustomStageEntry).files) {
@@ -227,7 +227,7 @@ Future<void> generateOTR(
               DateTime.now().millisecondsSinceEpoch ~/ 1000,
               fileLength,
               0,
-              MPQ_FILE_COMPRESS);
+              MPQ_FILE_COMPRESS,);
           mpqFile.write(fileData, fileLength, MPQ_COMPRESSION_ZLIB);
           mpqFile.finish();
           params.item3.send(1);
@@ -242,7 +242,7 @@ Future<void> generateOTR(
               DateTime.now().millisecondsSinceEpoch ~/ 1000,
               data.length,
               0,
-              MPQ_FILE_COMPRESS);
+              MPQ_FILE_COMPRESS,);
           mpqFile.write(data, data.length, MPQ_COMPRESSION_ZLIB);
           mpqFile.finish();
           params.item3.send(1);
@@ -250,11 +250,11 @@ Future<void> generateOTR(
       } else if (entry.value is CustomTexturesEntry) {
         final processes = (entry.value as CustomTexturesEntry).pairs.map(
               (pair) => compute(
-                  processTextureEntry, Tuple3(entry.key, pair, params.item4)),
+                  processTextureEntry, Tuple3(entry.key, pair, params.item4),),
             );
 
         final textures = await FutureExtensions.progressWait(
-            processes, () => params.item3.send(1));
+            processes, () => params.item3.send(1),);
 
         for (final texture in textures) {
           if (texture.item2 == null) {
@@ -267,9 +267,9 @@ Future<void> generateOTR(
               DateTime.now().millisecondsSinceEpoch ~/ 1000,
               texture.item2!.length,
               0,
-              MPQ_FILE_COMPRESS);
+              MPQ_FILE_COMPRESS,);
           mpqFile.write(
-              texture.item2!, texture.item2!.length, MPQ_COMPRESSION_ZLIB);
+              texture.item2!, texture.item2!.length, MPQ_COMPRESSION_ZLIB,);
           mpqFile.finish();
         }
       }
@@ -285,7 +285,7 @@ Future<void> generateOTR(
 }
 
 Future<Tuple2<String, Uint8List?>> processTextureEntry(
-    Tuple3<String, Tuple2<File, TextureManifestEntry>, bool> params) async {
+    Tuple3<String, Tuple2<File, TextureManifestEntry>, bool> params,) async {
   final pair = params.item2;
   final textureName = pair.item1.path.split('/').last.split('.').first;
   final fileName = '${params.item1}/$textureName';
